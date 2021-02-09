@@ -1,23 +1,37 @@
-import logo from './logo.svg';
+import React,{useState,useEffect} from 'react';
 import './App.css';
+import 'antd/dist/antd.css';
+import Players from './Component/Players/Players';
+import MainHeader from './Component/MainHeader/MainHeader';
 
 function App() {
+
+  const [Playerdata,setPlayerData] = useState([]);
+  const [searchText,setSearchText] = useState('');
+  const URL = 'https://api.npoint.io/d6bd0efc05639084eb17/';
+ 
+
+
+  useEffect(() => {
+       fetch(URL)
+       .then(res => res.json())
+       .then(data => setPlayerData(data.playerList))
+       .catch(err => console.log(err))
+  },[searchText])
+
+
+  function onClickhandler(){
+      const temApp =  Playerdata?.filter(player => player.PFName.includes(searchText));
+      setPlayerData(temApp)      
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+         <MainHeader
+            setSearchText={setSearchText} 
+            onClickhandler={onClickhandler}/>
+      
+         <Players Playerdata={Playerdata}/>
     </div>
   );
 }
